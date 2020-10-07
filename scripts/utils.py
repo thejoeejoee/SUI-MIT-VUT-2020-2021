@@ -2,6 +2,8 @@ import os
 import sys
 from subprocess import Popen
 import tempfile
+from time import sleep
+
 import numpy as np
 import random
 
@@ -117,6 +119,7 @@ def run_ai_only_game(
     for log in logs:
         log.close()
 
+    sleep(4.2)
     server_output.seek(0)
     game_summary = GameSummary.from_repr(server_output.read())
     return game_summary
