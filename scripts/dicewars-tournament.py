@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
-from signal import signal, SIGCHLD
-from argparse import ArgumentParser
-
-import math
-import itertools
-from utils import run_ai_only_game, get_nickname, BoardDefinition, SingleLineReporter, PlayerPerformance
-from utils import TournamentCombatantsProvider, EvaluationCombatantsProvider
-from utils import column_t
+import pickle
 import random
 import sys
-import pickle
+from argparse import ArgumentParser
+from signal import signal, SIGCHLD
 
+from utils import run_ai_only_game, get_nickname, BoardDefinition, SingleLineReporter, PlayerPerformance, \
+    TournamentCombatantsProvider, EvaluationCombatantsProvider, column_t
 
 parser = ArgumentParser(prog='Dice_Wars')
 parser.add_argument('-p', '--port', help="Server port", type=int, default=5005)
 parser.add_argument('-a', '--address', help="Server address", default='127.0.0.1')
-parser.add_argument('-b', '--board', help="Seed for generating board", type=int)
+parser.add_argument('-b', '--board', help="Seed for generating board", type=int, default=random.randint(0, 10 ** 10))
 parser.add_argument('-n', '--nb-boards', help="How many boards should be played", type=int, required=True)
 parser.add_argument('-g', '--game-size', help="How many players should play a game", type=int, required=True)
 parser.add_argument('-s', '--seed', help="Seed sampling players for a game", type=int)
@@ -41,14 +37,16 @@ def signal_handler(signum, frame):
 
 PLAYING_AIs = [
     'dt.rand',
-    'dt.sdc',
     'dt.ste',
+    'dt.sdc',
+    'dt.wpm_c',
+    'xlogin00',
+    'xkolar71',
+
     # 'dt.stei',
     # 'dt.wpm_d',
     # 'dt.wpm_s',
-    'dt.wpm_c',
     # 'xlogin42',
-    'xlogin00',
 ]
 UNIVERSAL_SEED = 42
 
@@ -60,13 +58,6 @@ def board_definitions(initial_board_seed):
     while True:
         yield BoardDefinition(board_seed, UNIVERSAL_SEED, UNIVERSAL_SEED)
         board_seed += 1
-
-
-def full_permunations_generator(players):
-    nb_perms = math.factorial(len(players))
-    perms_generator = itertools.permutations(players)
-
-    return nb_perms, perms_generator
 
 
 def rotational_permunations_generator(players):
@@ -107,7 +98,11 @@ def main():
             combatants = combatants_provider.get_combatants(args.game_size)
             nb_permutations, permutations_generator = rotational_permunations_generator(combatants)
             for i, permuted_combatants in enumerate(permutations_generator):
-                reporter.report('\r{} {}/{} {}'.format(boards_played, i+1, nb_permutations, ' vs. '.join(permuted_combatants)))
+                reporter.report('\r{} {}/{} {}'.format(
+                    boards_played,
+                    i + 1,
+                    nb_permutations, ' vs. '.join(permuted_combatants))
+                )
                 game_summary = run_ai_only_game(
                     args.port, args.address, procs, permuted_combatants,
                     board_definition,
@@ -121,6 +116,7 @@ def main():
         sys.stderr.write("Breaking the tournament because of {}\n".format(repr(e)))
         for p in procs:
             p.kill()
+        raise
 
     reporter.clean()
 

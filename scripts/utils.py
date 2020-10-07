@@ -72,8 +72,11 @@ def run_ai_only_game(
 
     ai_nicks = [get_nickname(ai) for ai in ais]
 
+    local_dir = os.path.dirname(__file__)
+
     server_cmd = [
-        "./scripts/server.py",
+        sys.executable,
+        os.path.join(local_dir, "./server.py"),
         "-n", str(len(ais)),
         "-p", str(port),
         "-a", str(address),
@@ -94,7 +97,8 @@ def run_ai_only_game(
 
     for ai_version in ais:
         client_cmd = [
-            "./scripts/client.py",
+            sys.executable,
+            os.path.join(local_dir, "./client.py"),
             "-p", str(port),
             "-a", str(address),
             "--ai", str(ai_version),

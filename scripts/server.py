@@ -140,6 +140,7 @@ def main():
     elif args.dice_assignment == 'flat':
         assign_dice_flat(board, args.number_of_players, area_ownership)
 
+
     random.seed(args.fixed)
     game = Game(board, area_ownership, args.number_of_players, args.address, args.port, args.order)
     game.run()
