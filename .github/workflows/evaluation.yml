@@ -3,7 +3,7 @@ name: AI Evaluation
 on: [push, pull_request]
 
 jobs:
-  evalute:
+  evaluate:
     runs-on: ubuntu-latest
     steps:
       -
@@ -53,4 +53,6 @@ jobs:
         with:
           body: |
             # Results
+            ```
             ${{ steps.results.outputs.results }}
+            ```

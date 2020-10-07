@@ -6,4 +6,4 @@ install-venv:
 
 evaluate-tournament-to-json:
 	PYTHONPATH=./:scripts/ $(PYTHON) ./scripts/dicewars-tournament.py \
-		--report --game-size 4 --nb-boards 6 --debug --logdir logs --json
+		--report --game-size 4 --nb-boards 6 --debug --logdir logs
