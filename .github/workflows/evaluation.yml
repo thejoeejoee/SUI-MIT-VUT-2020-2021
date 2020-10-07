@@ -39,7 +39,13 @@ jobs:
       -
         id: results
         name: Load results
-        run: echo "::set-output name=tournament_results::$(cat logs/.make-log | awk NF | tail -n1)"
+        run: |
+          RESULTS=$(cat logs/.make-log)
+          RESULTS="${RESULTS//'%'/'%25'}"
+          RESULTS="${RESULTS//$'\n'/'%0A'}"
+          RESULTS="${RESULTS//$'\r'/'%0D'}"
+          echo "$RESULTS"
+          echo "::set-output name=results::$RESULTS"
 
       -
         name: Post results to comment
@@ -47,4 +53,4 @@ jobs:
         with:
           body: |
             # Results
-            * ```${{ steps.results.outputs.tournament_results }}```
+            ${{ steps.results.outputs.results }}
