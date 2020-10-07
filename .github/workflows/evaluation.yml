@@ -27,12 +27,19 @@ jobs:
       -
         id: evaluation
         name: Run tournament
-        run: make --silent evaluate-tournament-to-json 2>&1 | tee log
+        run: make --silent evaluate-tournament-to-json 2>&1 | tee logs/.make-log
+
+      -
+        name: Store logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: logs
+          path: logs/
 
       -
         id: results
         name: Load results
-        run: echo "::set-output name=tournament_results::$(cat log | awk NF | tail -n1)"
+        run: echo "::set-output name=tournament_results::$(cat logs/.make-log | awk NF | tail -n1)"
 
       -
         name: Post results to comment
