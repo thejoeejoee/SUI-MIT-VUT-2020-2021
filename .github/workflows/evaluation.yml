@@ -3,7 +3,7 @@ name: AI Evaluation
 on: [push, pull_request]
 
 jobs:
-  build:
+  evalute:
     runs-on: ubuntu-latest
     steps:
       -
@@ -27,7 +27,7 @@ jobs:
       -
         id: evaluation
         name: Run tournament
-        run: echo "::set-output name=tournament_results::$(make evaluate-tournament-to-json | tail -n1)\n"
+        run: echo "::set-output name=tournament_results::$(make evaluate-tournament-to-json | awk NF | tail -n1)\n"
 
       -
         name: Post results to comment
