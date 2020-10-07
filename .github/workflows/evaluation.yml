@@ -27,7 +27,12 @@ jobs:
       -
         id: evaluation
         name: Run tournament
-        run: echo "::set-output name=tournament_results::$(make evaluate-tournament-to-json 2>&1 | awk NF | tail -n1)\n"
+        run: make --silent evaluate-tournament-to-json 2>&1 | tee log
+
+      -
+        id: results
+        name: Load results
+        run: echo "::set-output name=tournament_results::$(cat log | awk NF | tail -n1)"
 
       -
         name: Post results to comment
@@ -35,4 +40,4 @@ jobs:
         with:
           body: |
             # Results
-            * ```${{ steps.evaluation.outputs.tournament_results }}```
+            * ```${{ steps.results.outputs.tournament_results }}```
