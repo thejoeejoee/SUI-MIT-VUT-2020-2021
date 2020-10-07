@@ -27,7 +27,7 @@ jobs:
       -
         id: evaluation
         name: Run tournament
-        run: echo "::set-output name=tournament_results::$(make evaluate-tournament)\n"
+        run: echo "::set-output name=tournament_results::$(make evaluate-tournament 2>&1)\n"
 
       -
         name: Post results to comment
@@ -35,4 +35,5 @@ jobs:
         with:
           body: |
             # Results
+            * ${{ join(steps.evaluation.outputs.*, '\n') }}
             * ${{ steps.evaluation.outputs.tournament_results }}
