@@ -1,0 +1,28 @@
+name: AI Evaluation
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout AI
+        uses: actions/checkout@v2
+
+      -
+        name: Prepare enviroment
+        run: make install-venv
+
+      -
+        id: evaluation
+        name: Run tournament
+        run: echo "::set-output name=tournament_results::$(make evaluate-tournament)\n"
+
+      -
+        name: Post results to comment
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: |
+            # Results
+            * ${{ steps.evaluation.outputs.tournament_results }}
