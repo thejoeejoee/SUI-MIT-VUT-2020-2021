@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import pickle
 import random
 import sys
@@ -18,6 +19,7 @@ parser.add_argument('-s', '--seed', help="Seed sampling players for a game", typ
 parser.add_argument('-l', '--logdir', help="Folder to store last running logs in.")
 parser.add_argument('--ai-under-test', help="Only play this AI against others")
 parser.add_argument('-d', '--debug', action='store_true')
+parser.add_argument('--json', action='store_true')
 parser.add_argument('-r', '--report', help="State the game number on the stdout", action='store_true')
 parser.add_argument('--save', help="Where to put pickled GameSummaries")
 parser.add_argument('--load', help="Which GameSummaries to start from")
@@ -41,7 +43,7 @@ PLAYING_AIs = [
     'dt.sdc',
     'dt.wpm_c',
     'xlogin00',
-    'xkolar71',
+    # 'xkolar71',
 
     # 'dt.stei',
     # 'dt.wpm_d',
@@ -136,7 +138,10 @@ def main():
     perf_strings = [performances[0].competitors_header()] + [str(perf) for perf in performances]
     fields = [perf.split() for perf in perf_strings]
 
-    print(column_t(fields))
+    if not args.json:
+        print(column_t(fields))
+    else:
+        print(json.dumps(dict(results=fields)))
 
 
 if __name__ == '__main__':
