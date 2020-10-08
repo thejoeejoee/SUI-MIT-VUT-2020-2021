@@ -42,8 +42,8 @@ PLAYING_AIs = [
     'dt.ste',
     'dt.sdc',
     'dt.wpm_c',
-    # 'xlogin00',
-    'xkolar71',
+    'xlogin00',
+    # 'xkolar71',
 
     # 'dt.stei',
     # 'dt.wpm_d',
