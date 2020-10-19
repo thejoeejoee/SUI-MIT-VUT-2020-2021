@@ -7,6 +7,11 @@
 - Petr Kapoun <xkapou04@stud.fit.vutbr.cz>
 - Jindřich Šesták <xsesta05@stud.fit.vutbr.cz>
 
+### Reference Repository
+https://github.com/ibenes/dicewars
+
+Updated to commit [c8e186e](https://github.com/ibenes/dicewars/tree/c8e186ea1e033b40b41894f3775d89554b9dd7b2).
+
 ---
 
 # Dice Wars
