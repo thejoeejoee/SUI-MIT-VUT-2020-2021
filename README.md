@@ -10,7 +10,7 @@
 ### Reference Repository
 https://github.com/ibenes/dicewars
 
-Updated to commit [c8e186e](https://github.com/ibenes/dicewars/tree/c8e186ea1e033b40b41894f3775d89554b9dd7b2).
+Updated to commit [9010338](https://github.com/ibenes/dicewars/tree/901033865b8dc0951573c9fc6b2690f88f694020).
 
 ---
 
