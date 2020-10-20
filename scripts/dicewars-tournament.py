@@ -49,6 +49,8 @@ PLAYING_AIs = [
     # 'dt.wpm_d',
     # 'dt.wpm_s',
     # 'xlogin42',
+    'xlogin00',
+    'xkolar71',
 ]
 UNIVERSAL_SEED = 42
 
@@ -59,7 +61,8 @@ def board_definitions(initial_board_seed):
     board_seed = initial_board_seed
     while True:
         yield BoardDefinition(board_seed, UNIVERSAL_SEED, UNIVERSAL_SEED)
-        board_seed += 1
+        if board_seed is not None:
+            board_seed += 1
 
 
 def rotational_permunations_generator(players):
