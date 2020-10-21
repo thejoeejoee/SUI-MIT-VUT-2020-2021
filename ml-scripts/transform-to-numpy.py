@@ -29,7 +29,10 @@ for name, slc in PACKAGES.items():
         for conf in listdir(os.path.join(DATA_DIR, winner))[slc]:
             pth = os.path.join(DATA_DIR, winner, conf)
 
-            line = np.concatenate(([winner_id - 1], np.load(pth, allow_pickle=True)))
+            line = np.concatenate((
+                [winner_id - 1],
+                np.load(pth, allow_pickle=True)
+            ))
             data = np.concatenate(
                 ([line], data),
             )
