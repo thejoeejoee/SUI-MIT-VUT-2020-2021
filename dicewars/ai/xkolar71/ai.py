@@ -7,7 +7,7 @@
 # Year: 2020
 # Description: A definition of a class that represents an AI agent for
 #              the Dice Wars game.
-
+import os
 from logging import getLogger
 from typing import List, Union, Tuple, Deque, Dict
 from copy import deepcopy
@@ -16,6 +16,11 @@ from dicewars.client.ai_driver import BattleCommand, EndTurnCommand
 from dicewars.client.game.board import Board
 from ..utils import possible_attacks, probability_of_successful_attack, \
     probability_of_holding_area
+import tensorflow as tf
+
+from ...ml.game import serialize_board_configuration
+
+LOCAL_DIR = os.path.dirname(__file__)
 
 
 class AI:
@@ -69,8 +74,10 @@ class AI:
 
         self.__player_name = player_name
         self.__board = board
-        self.__players_order = players_order
+        self._players_order = players_order
         self.__loger = getLogger(self.__LOGGER_NAME)
+
+        self.__model = tf.keras.models.load_model(os.path.join(LOCAL_DIR, 'model.h5'))
 
         nb_players = board.nb_players_alive()
         self.__loger.debug(
@@ -178,7 +185,7 @@ class AI:
 
         return [r for r in players_regions if len(r) == max_region_size][0]
 
-    def __heuristic(self, player_name: int, board: Board) -> int:
+    def _heuristic(self, player_name: int, board: Board) -> int:
         """
         Rturns the heuristic evaluation of a given board for a given player.
 
@@ -228,7 +235,7 @@ class AI:
                  best turn, or None in case there is no suitable turn.
         """
         # construct a queue of players to be considered (in appropriate order)
-        players = deque(self.__players_order)
+        players = deque(self._players_order)
         players.reverse()
         while players[-1] != player_name:
             players.rotate(1)
@@ -264,9 +271,7 @@ class AI:
         # there are no more players
         if not players_names:
             # just evaluate the heuristic function for the AI's player
-            return None, {
-                self.__player_name: self.__heuristic(self.__player_name, board),
-            }
+            return None, self._batch_heuristic(board=board)
 
         player_name = players_names[-1]
         # current player is not alive => skip him
@@ -314,10 +319,19 @@ class AI:
                 deepcopy(board), players_names, self.__MAXN_DEPTH
             )
 
+        evaluated = self._batch_heuristic(board=board)
         # compute the heuristic function for all living players
         living_players = set(a.get_owner_name() for a in board.areas.values())
         h = {}
         for player_name in living_players:
-            h[player_name] = self.__heuristic(player_name, board)
+            h[player_name] = evaluated.get(player_name)
 
         return None, h
+
+    def _batch_heuristic(self, board: Board) -> dict:
+        # TODO: doc
+        serialized = serialize_board_configuration(board=board)
+
+        prediction = self.__model.predict([serialized])[0]
+
+        return {i: v for i, v in enumerate(prediction, start=1)}

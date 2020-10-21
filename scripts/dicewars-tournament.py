@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from random import shuffle
 from signal import signal, SIGCHLD
 from argparse import ArgumentParser
 
@@ -43,13 +44,16 @@ PLAYING_AIs = [
     'dt.rand',
     'dt.sdc',
     'dt.ste',
+    'dt.wpm_c',
+    'xlogin00',
+
     # 'dt.stei',
     # 'dt.wpm_d',
     # 'dt.wpm_s',
-    'dt.wpm_c',
+
     # 'xlogin42',
-    'xlogin00',
     'xkolar71',
+    'xkolar71_orig',
 ]
 UNIVERSAL_SEED = 42
 
@@ -106,6 +110,8 @@ def main():
                 break
             boards_played += 1
 
+            # shuffle(PLAYING_AIs)
+            # combatants = PLAYING_AIs #  combatants_provider.get_combatants(args.game_size)
             combatants = combatants_provider.get_combatants(args.game_size)
             nb_permutations, permutations_generator = rotational_permunations_generator(combatants)
             for i, permuted_combatants in enumerate(permutations_generator):
@@ -123,6 +129,7 @@ def main():
         sys.stderr.write("Breaking the tournament because of {}\n".format(repr(e)))
         for p in procs:
             p.kill()
+        raise
 
     reporter.clean()
 
