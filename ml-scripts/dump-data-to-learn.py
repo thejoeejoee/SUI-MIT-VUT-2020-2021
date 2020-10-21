@@ -33,6 +33,10 @@ PLAYING_AIs = [
     'xkolar71_1',
     'xkolar71_2',
     'xkolar71_3',
+    # 'dt.rand',
+    # 'dt.sdc',
+    # 'dt.ste',
+    # 'dt.stei',
 ]
 UNIVERSAL_SEED = 42
 
@@ -62,11 +66,9 @@ def main():
                 board_definition,
                 fixed=UNIVERSAL_SEED,
                 client_seed=UNIVERSAL_SEED,
-                debug=True, logdir='logs',
+                # debug=True, logdir='logs',
             )
-
-            if boards_played == 20:
-                break
+            print(f'Played {boards_played} games.', file=sys.stderr)
 
     except (Exception, KeyboardInterrupt) as e:
         sys.stderr.write("Breaking the tournament because of {}\n".format(repr(e)))

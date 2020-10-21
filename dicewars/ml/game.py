@@ -1,4 +1,7 @@
-from typing import List, Dict
+import os
+import pickle
+from os import makedirs
+from typing import Dict, Tuple, Iterable
 
 from dicewars.server.area import Area
 from dicewars.server.board import Board
@@ -8,8 +11,12 @@ from dicewars.server.player import Player
 MAX_AREA_COUNT = 30
 MAX_PLAYER_COUNT = 30
 
+GameConfiguration = Tuple[int]
 
-def serialize_game_configuration(game: Game) -> List[int]:
+LOG_DIR = os.path.join(os.path.dirname(__file__), '../../learning-data')
+
+
+def serialize_game_configuration(game: Game) -> GameConfiguration:
     """
     Serializes current game configuration to integer vector of static length:
     435 triangle from matrix of neighbor areas (30x30, but just half)
@@ -60,4 +67,18 @@ def serialize_game_configuration(game: Game) -> List[int]:
         for player_id in range(MAX_PLAYER_COUNT)
     ])
 
-    return board_state
+    return tuple(map(int, board_state))
+
+
+def save_game_configurations(winner_index: int, configurations: Iterable[GameConfiguration]):
+    """
+    Saves configurations from finished game to folder by index of winner.
+    """
+    winner_dir = os.path.join(LOG_DIR, f'{winner_index}')
+    makedirs(winner_dir, exist_ok=True)
+
+    for conf in configurations:
+        conf_hash = str(hash(conf))
+        conf_file = os.path.join(winner_dir, conf_hash)
+        with open(conf_file, 'wb') as f:
+            pickle.dump(conf, f)

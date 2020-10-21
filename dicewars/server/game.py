@@ -67,7 +67,8 @@ class Game:
     def run(self):
         """Main loop of the game
         """
-        from ..ml.game import serialize_game_configuration
+        from ..ml.game import serialize_game_configuration, save_game_configurations
+        configurations = set()
 
         try:
             for i in range(1, self.number_of_players + 1):
@@ -78,12 +79,17 @@ class Game:
                 self.handle_player_turn()
                 if self.check_win_condition():
                     sys.stdout.write(str(self.summary))
+                    for i, p in self.players.items():
+                        if p.get_number_of_areas() == self.board.get_number_of_areas():
+                            save_game_configurations(
+                                winner_index=i,
+                                configurations=configurations,
+                            )
+                            break
                     break
 
                 serialized = serialize_game_configuration(self)
-                self.logger.debug(serialized)
-
-                # TODO: dump state and wait for the winner
+                configurations.add(serialized)
 
         except KeyboardInterrupt:
             self.logger.info("Game interrupted.")
