@@ -6,15 +6,13 @@ import tensorflow as tf
 
 PLAYERS_COUNT = 4
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-seeded')
 
 TRAIN_DATA = np.load(os.path.join(DATA_DIR, 'data-train.npy'))
 TRAIN_DATA_COUNT = TRAIN_DATA.shape[0]
 
 VALIDATE_DATA = np.load(os.path.join(DATA_DIR, 'data-val.npy'))
 VALIDATE_DATA_COUNT = VALIDATE_DATA.shape[0]
-
-TEST_DATA = np.load(os.path.join(DATA_DIR, 'data-test.npy'))
 
 BATCH_SIZE = 32
 
@@ -28,7 +26,7 @@ def reshape_results(results: np.array) -> np.array:
     )
 
 def get_model():
-    input_data = tf.keras.Input(shape=(503,))
+    input_data = tf.keras.Input(shape=(499,))
 
     NGC = 16
 
@@ -63,4 +61,4 @@ model.fit(
     verbose=1,
 )
 
-model.save('./model-003.h5')
+model.save('./model-004.h5')

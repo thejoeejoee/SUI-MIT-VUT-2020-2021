@@ -41,7 +41,7 @@ UNIVERSAL_SEED = 42
 def board_definitions(initial_board_seed):
     board_seed = initial_board_seed
     while True:
-        yield BoardDefinition(board_seed, UNIVERSAL_SEED, UNIVERSAL_SEED)
+        yield BoardDefinition(random.randint(1, 10 ** 10), random.randint(1, 10 ** 10), random.randint(1, 10 ** 10))
         if board_seed is not None:
             board_seed += 1
 
@@ -49,7 +49,7 @@ def board_definitions(initial_board_seed):
 def main():
     args = parser.parse_args()
 
-    random.seed(args.seed)
+    # random.seed(args.seed)
 
     signal(SIGCHLD, signal_handler)
 

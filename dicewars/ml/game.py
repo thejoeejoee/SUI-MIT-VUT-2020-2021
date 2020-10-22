@@ -1,7 +1,7 @@
 import os
 import pickle
 from os import makedirs
-from typing import Dict, Tuple, Iterable, Optional
+from typing import Dict, Tuple, Iterable, Optional, List
 
 from dicewars.server.area import Area
 from dicewars.server.board import Board
@@ -12,12 +12,13 @@ MAX_PLAYER_COUNT = 4
 
 GameConfiguration = Tuple[int]
 
-LOG_DIR = os.path.join(os.path.dirname(__file__), '../../../sui-learning-data')
+LOG_DIR = os.path.join(os.path.dirname(__file__), '../../../sui-learning-data-seeded')
 
 
 def serialize_game_configuration(
         board: Board,
-        players: Optional[Dict[int, Player]] = None
+        players: Optional[Dict[int, Player]] = None,
+        biggest_regions: Optional[Dict[int, int]] = None,
 ) -> GameConfiguration:
     """
     Serializes current game configuration to integer vector of static length:
@@ -25,10 +26,12 @@ def serialize_game_configuration(
     30 areas owners
     30 dices counts
     4 biggest regions
-    4 reserves
     ==
-    503 integers
+    499 integers
     """
+    assert players or biggest_regions, 'Given biggest regions directly or by players'
+    assert not biggest_regions or len(biggest_regions) == MAX_PLAYER_COUNT, 'Exact count of biggest regions'
+
     areas: Dict[int, Area] = board.areas
     players = players or dict()
 
@@ -57,16 +60,18 @@ def serialize_game_configuration(
     ])
 
     # size of biggest region of each player
-    board_state.extend([
-        p.get_largest_region(board) if (p := players.get(player_id + 1)) else 0
-        for player_id in range(MAX_PLAYER_COUNT)
-    ])
-
-    # dices in reserve of each player
-    board_state.extend([
-        p.get_reserve() if (p := players.get(player_id + 1)) else 0
-        for player_id in range(MAX_PLAYER_COUNT)
-    ])
+    if biggest_regions:
+        # defined directly (in evaluation time)
+        board_state.extend([
+            biggest_regions.get(player_id) or 0
+            for player_id in range(MAX_PLAYER_COUNT)
+        ])
+    else:
+        # defined by players (in training time)
+        board_state.extend([
+            p.get_largest_region(board) if (p := players.get(player_id + 1)) else 0
+            for player_id in range(MAX_PLAYER_COUNT)
+        ])
 
     return tuple(map(int, board_state))
 
@@ -78,8 +83,8 @@ def save_game_configurations(winner_index: int, configurations: Iterable[GameCon
     winner_dir = os.path.join(LOG_DIR, f'{winner_index}')
     makedirs(winner_dir, exist_ok=True)
 
-    for conf in configurations:
-        conf_hash = str(hash(conf))
-        conf_file = os.path.join(winner_dir, conf_hash)
-        with open(conf_file, 'wb') as f:
-            pickle.dump(conf, f)
+    data = frozenset(configurations)
+    conf_hash = str(hash(data))
+    conf_file = os.path.join(winner_dir, conf_hash)
+    with open(conf_file, 'wb') as f:
+        pickle.dump(data, f)

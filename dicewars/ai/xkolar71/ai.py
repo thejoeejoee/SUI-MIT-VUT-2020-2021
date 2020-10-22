@@ -16,7 +16,6 @@ from dicewars.client.ai_driver import BattleCommand, EndTurnCommand
 from dicewars.client.game.board import Board
 from ..utils import possible_attacks, probability_of_successful_attack, \
     probability_of_holding_area
-import tensorflow as tf
 
 from ...ml.game import serialize_game_configuration
 
@@ -72,7 +71,7 @@ class AI:
         self._players_order = players_order
         self.__loger = getLogger(self.__LOGGER_NAME)
 
-        self.__model = tf.keras.models.load_model(os.path.join(LOCAL_DIR, 'model.h5'))
+        self.__model = None
 
         nb_players = board.nb_players_alive()
         self.__loger.debug(
@@ -303,8 +302,23 @@ class AI:
 
     def _batch_heuristic(self, board: Board) -> dict:
         # TODO: doc
-        serialized = serialize_game_configuration(board=board)
+        serialized = serialize_game_configuration(
+            board=board,
+            biggest_regions={i: self.__largest_region(
+                player_name=i,
+                board=board
+            ) for i in self._players_order}
+        )
 
-        prediction = self.__model.predict([serialized])[0]
+        prediction = self._model.predict([serialized])[0]
 
         return {i: v for i, v in enumerate(prediction, start=1)}
+
+    @property
+    def _model(self):
+        import tensorflow as tf
+
+        if not self.__model:
+            self.__model = tf.keras.models.load_model(os.path.join(LOCAL_DIR, 'model.h5'))
+
+        return self.__model

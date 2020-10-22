@@ -1,8 +1,8 @@
-from .xkolar71 import AI as OriginalAI
+from .xkolar71 import AI as NewAI
 from ..client.game.board import Board
 
 
-class AI(OriginalAI):
+class AI(NewAI):
     __LARGEST_REG_HEURISTIC_WEIGHT = 50
     """ weight of a largest region for the heuristic function """
     __REG_HEURISTIC_WEIGHT = 5
