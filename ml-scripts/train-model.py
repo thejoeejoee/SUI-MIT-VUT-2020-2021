@@ -5,7 +5,7 @@ import tensorflow as tf
 
 PLAYERS_COUNT = 4
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '../learning-data')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data')
 
 TRAIN_DATA = np.load(os.path.join(DATA_DIR, 'data-train.npy'))
 TRAIN_DATA_COUNT = TRAIN_DATA.shape[0]

@@ -18,7 +18,7 @@ from ..utils import possible_attacks, probability_of_successful_attack, \
     probability_of_holding_area
 import tensorflow as tf
 
-from ...ml.game import serialize_board_configuration
+from ...ml.game import serialize_game_configuration
 
 LOCAL_DIR = os.path.dirname(__file__)
 
@@ -330,7 +330,7 @@ class AI:
 
     def _batch_heuristic(self, board: Board) -> dict:
         # TODO: doc
-        serialized = serialize_board_configuration(board=board)
+        serialized = serialize_game_configuration(board=board)
 
         prediction = self.__model.predict([serialized])[0]
 

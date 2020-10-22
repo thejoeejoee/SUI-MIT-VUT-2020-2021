@@ -88,7 +88,10 @@ class Game:
                             break
                     break
 
-                serialized = serialize_game_configuration(self)
+                serialized = serialize_game_configuration(
+                    board=self.board,
+                    players=self.players,
+                )
                 configurations.add(serialized)
 
         except KeyboardInterrupt:

@@ -29,10 +29,10 @@ def signal_handler(signum, frame):
 
 
 PLAYING_AIs = [
-    'xkolar71',
-    'xkolar71_1',
+    'xkolar71_orig',
     'xkolar71_2',
     'xkolar71_3',
+    'xkolar71_4',
     # 'dt.rand',
     # 'dt.sdc',
     # 'dt.ste',

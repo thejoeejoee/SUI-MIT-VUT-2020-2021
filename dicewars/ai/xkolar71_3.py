@@ -1,3 +1,3 @@
-from .xkolar71 import AI
+from .xkolar71_orig import AI
 
 __all__ = ['AI']
