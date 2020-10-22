@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 
 import numpy as np
@@ -6,7 +6,7 @@ import tensorflow as tf
 
 PLAYERS_COUNT = 4
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '../learning-data')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data')
 
 TEST_DATA = np.load(os.path.join(DATA_DIR, 'data-test.npy'))
 
@@ -21,7 +21,7 @@ def reshape_results(results: np.array) -> np.array:
         newshape=[results.shape[0], PLAYERS_COUNT]
     )
 
-model = tf.keras.models.load_model('./model-002.h5')
+model = tf.keras.models.load_model('./model-003.h5')
 
 TEST_DATA[:, 435:] = 0
 

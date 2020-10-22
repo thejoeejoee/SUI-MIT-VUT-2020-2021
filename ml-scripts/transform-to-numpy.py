@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 from os import listdir
@@ -8,17 +10,21 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data')
 
 winners = listdir(DATA_DIR)
 
+# 77k
+TRAIN_PART = 13
+VAL_PART = 4
+TEST_PART = 2
 PACKAGES = dict(
-    train=slice(0, 17),
-    val=slice(17, 17 + 5),
-    test=slice(17 + 5, 17 + 5 + 3),
+    train=slice(0, TRAIN_PART),
+    val=slice(TRAIN_PART, TRAIN_PART + VAL_PART),
+    test=slice(TRAIN_PART + VAL_PART, TRAIN_PART + VAL_PART + TEST_PART),
 )
 
 for name, slc in PACKAGES.items():
     slc = slice(slc.start * 1000, slc.stop * 1000)
 
     loaded_files = 0
-    data = np.empty((0, 556), dtype=int)
+    data = np.empty((0, 503 + 1), dtype=int)
 
     for winner in winners:
         if winner not in '1234':

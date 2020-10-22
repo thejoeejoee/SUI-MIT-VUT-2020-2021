@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-import json
-import pickle
 import random
 import sys
 from argparse import ArgumentParser
 from signal import signal, SIGCHLD
 
-from utils import run_ai_only_game, get_nickname, BoardDefinition, SingleLineReporter, PlayerPerformance, \
-    TournamentCombatantsProvider, EvaluationCombatantsProvider, column_t
+from utils import run_ai_only_game, BoardDefinition
 
 parser = ArgumentParser(prog='Dice_Wars')
 parser.add_argument('-p', '--port', help="Server port", type=int, default=5005)
@@ -66,7 +63,7 @@ def main():
                 board_definition,
                 fixed=UNIVERSAL_SEED,
                 client_seed=UNIVERSAL_SEED,
-                # debug=True, logdir='logs',
+                debug=True, logdir='logs',
             )
             print(f'Played {boards_played} games.', file=sys.stderr)
 

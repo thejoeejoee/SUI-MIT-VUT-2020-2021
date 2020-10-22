@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 
 import numpy as np
@@ -27,7 +28,7 @@ def reshape_results(results: np.array) -> np.array:
     )
 
 def get_model():
-    input_data = tf.keras.Input(shape=(555,))
+    input_data = tf.keras.Input(shape=(503,))
 
     NGC = 16
 
@@ -62,4 +63,4 @@ model.fit(
     verbose=1,
 )
 
-model.save('./model-002.h5')
+model.save('./model-003.h5')
