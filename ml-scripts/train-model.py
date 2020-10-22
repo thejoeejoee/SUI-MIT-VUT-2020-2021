@@ -6,7 +6,7 @@ import tensorflow as tf
 
 PLAYERS_COUNT = 4
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-seeded')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-sony')
 
 TRAIN_DATA = np.load(os.path.join(DATA_DIR, 'data-train.npy'))
 TRAIN_DATA_COUNT = TRAIN_DATA.shape[0]
@@ -56,9 +56,9 @@ model.fit(
     ),
     steps_per_epoch=TRAIN_DATA_COUNT // BATCH_SIZE,
     validation_steps=VALIDATE_DATA_COUNT // BATCH_SIZE,
-    epochs=4,
+    epochs=15,
     batch_size=BATCH_SIZE,
     verbose=1,
 )
 
-model.save('./model-004.h5')
+model.save('./model-005.h5')

@@ -6,15 +6,16 @@ import tensorflow as tf
 
 PLAYERS_COUNT = 4
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-sony')
 
 TEST_DATA = np.load(os.path.join(DATA_DIR, 'data-test.npy'))
+# TEST_DATA = np.load(os.path.join(DATA_DIR, 'learning-data.npy'))
 
 TEST_DATA_COUNT = TEST_DATA.shape[0]
 
-model = tf.keras.models.load_model(os.path.join(os.path.dirname(__file__), 'model-004.h5'))
+model = tf.keras.models.load_model(os.path.join(os.path.dirname(__file__), 'model-005.h5'))
 
-# TEST_DATA[:, :] = 0
+# TEST_DATA[:, 1:435] = 0
 
 predicted = model.predict(TEST_DATA[:, 1:])
 

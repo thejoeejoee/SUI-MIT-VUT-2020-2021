@@ -2,6 +2,7 @@
 import random
 import sys
 from argparse import ArgumentParser
+import time
 from signal import signal, SIGCHLD
 
 from utils import run_ai_only_game, BoardDefinition
@@ -41,6 +42,7 @@ UNIVERSAL_SEED = 42
 def board_definitions(initial_board_seed):
     board_seed = initial_board_seed
     while True:
+        random.seed(int(time.time()))
         yield BoardDefinition(random.randint(1, 10 ** 10), random.randint(1, 10 ** 10), random.randint(1, 10 ** 10))
         if board_seed is not None:
             board_seed += 1
@@ -61,8 +63,8 @@ def main():
             run_ai_only_game(
                 args.port, args.address, procs, PLAYING_AIs,
                 board_definition,
-                fixed=UNIVERSAL_SEED,
-                client_seed=UNIVERSAL_SEED,
+                fixed=random.randint(1, 10 ** 10),
+                client_seed=random.randint(1, 10 ** 10),
                 debug=True, logdir='logs',
             )
             print(f'Played {boards_played} games.', file=sys.stderr)

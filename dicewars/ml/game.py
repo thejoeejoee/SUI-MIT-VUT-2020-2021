@@ -12,7 +12,7 @@ MAX_PLAYER_COUNT = 4
 
 GameConfiguration = Tuple[int]
 
-LOG_DIR = os.path.join(os.path.dirname(__file__), '../../../sui-learning-data-seeded')
+LOG_DIR = os.path.join(os.path.dirname(__file__), '../../../sui-learning-data-sony')
 
 
 def serialize_game_configuration(
