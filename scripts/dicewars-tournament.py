@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import time
 from random import shuffle
 from signal import signal, SIGCHLD
 from argparse import ArgumentParser
@@ -63,7 +64,8 @@ players_info = {ai: {'games': []} for ai in PLAYING_AIs}
 def board_definitions(initial_board_seed):
     board_seed = initial_board_seed
     while True:
-        yield BoardDefinition(board_seed, UNIVERSAL_SEED, UNIVERSAL_SEED)
+        random.seed(int(time.time()))
+        yield BoardDefinition(random.randint(1, 10 ** 10), random.randint(1, 10 ** 10), random.randint(1, 10 ** 10))
         if board_seed is not None:
             board_seed += 1
 
@@ -122,8 +124,8 @@ def main():
                 game_summary = run_ai_only_game(
                     args.port, args.address, procs, permuted_combatants,
                     board_definition,
-                    fixed=UNIVERSAL_SEED,
-                    client_seed=UNIVERSAL_SEED,
+                    fixed=random.randint(1, 10 ** 9),
+                    client_seed=random.randint(1, 10 ** 9),
                     logdir=args.logdir,
                     debug=args.debug,
                 )
