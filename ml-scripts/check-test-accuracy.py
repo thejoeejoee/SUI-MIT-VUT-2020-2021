@@ -3,10 +3,9 @@ import os
 
 import numpy as np
 import tensorflow as tf
-
 PLAYERS_COUNT = 4
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-sony')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-mixed')
 
 TEST_DATA = np.load(os.path.join(DATA_DIR, 'data-test.npy'))
 # TEST_DATA = np.load(os.path.join(DATA_DIR, 'learning-data.npy'))

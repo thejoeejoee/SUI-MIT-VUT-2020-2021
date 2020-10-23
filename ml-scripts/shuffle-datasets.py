@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-sony')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-mixed')
 
 data = np.load(os.path.join(DATA_DIR, 'learning-data.npy'))
 DATA_COUNT = data.shape[0]

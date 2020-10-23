@@ -7,7 +7,7 @@ from os import listdir
 
 import numpy as np
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-sony')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-mixed')
 
 winners = listdir(DATA_DIR)
 

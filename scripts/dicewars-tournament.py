@@ -115,7 +115,10 @@ def main():
             combatants = combatants_provider.get_combatants(args.game_size)
             nb_permutations, permutations_generator = rotational_permunations_generator(combatants)
             for i, permuted_combatants in enumerate(permutations_generator):
-                reporter.report('\r{} {}/{} {}'.format(boards_played, i+1, nb_permutations, ' vs. '.join(permuted_combatants)))
+                reporter.report('\r{} {}/{} {} (last game {})'.format(
+                    boards_played, i+1, nb_permutations, ' vs. '.join(permuted_combatants),
+                    all_games[-1].winner if all_games else '',
+                ),)
                 game_summary = run_ai_only_game(
                     args.port, args.address, procs, permuted_combatants,
                     board_definition,

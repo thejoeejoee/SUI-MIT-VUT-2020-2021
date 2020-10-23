@@ -8,15 +8,15 @@
 # Description: A definition of a class that represents an AI agent for
 #              the Dice Wars game.
 import os
+from collections import deque
+from copy import deepcopy
 from logging import getLogger
 from typing import List, Union, Tuple, Deque, Dict
-from copy import deepcopy
-from collections import deque
+
 from dicewars.client.ai_driver import BattleCommand, EndTurnCommand
 from dicewars.client.game.board import Board
 from ..utils import possible_attacks, probability_of_successful_attack, \
     probability_of_holding_area
-
 from ...ml.game import serialize_game_configuration
 
 LOCAL_DIR = os.path.dirname(__file__)
@@ -72,6 +72,7 @@ class AI:
         self.__loger = getLogger(self.__LOGGER_NAME)
 
         self.__model = None
+        self._model
 
         nb_players = board.nb_players_alive()
         self.__loger.debug(
@@ -304,10 +305,14 @@ class AI:
         # TODO: doc
         serialized = serialize_game_configuration(
             board=board,
-            biggest_regions={i: self.__largest_region(
-                player_name=i,
-                board=board
-            ) for i in self._players_order}
+            biggest_regions={
+                i: len(
+                    self.__largest_region(
+                        player_name=i,
+                        board=board
+                    )
+                ) for i in self._players_order
+            }
         )
 
         prediction = self._model.predict([serialized])[0]
@@ -316,9 +321,8 @@ class AI:
 
     @property
     def _model(self):
-        import tensorflow as tf
-
         if not self.__model:
+            import tensorflow as tf
             self.__model = tf.keras.models.load_model(os.path.join(LOCAL_DIR, 'model.h5'))
 
         return self.__model

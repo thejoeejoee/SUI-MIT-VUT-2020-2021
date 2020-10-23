@@ -6,7 +6,7 @@ import tensorflow as tf
 
 PLAYERS_COUNT = 4
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-sony')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../../sui-learning-data-mixed')
 
 TRAIN_DATA = np.load(os.path.join(DATA_DIR, 'data-train.npy'))
 TRAIN_DATA_COUNT = TRAIN_DATA.shape[0]
@@ -25,12 +25,13 @@ def reshape_results(results: np.array) -> np.array:
         newshape=[results.shape[0], PLAYERS_COUNT]
     )
 
+
 def get_model():
     input_data = tf.keras.Input(shape=(499,))
 
     NGC = 16
 
-    x = tf.keras.layers.Dense(NGC * 2**2, activation='relu')(input_data)
+    x = tf.keras.layers.Dense(NGC * 2 ** 2, activation='relu')(input_data)
     x = tf.keras.layers.Dropout(0.25)(x)
     x = tf.keras.layers.Dense(NGC * 2, activation='relu')(x)
     x = tf.keras.layers.Dense(PLAYERS_COUNT, activation='softmax')(x)
@@ -41,7 +42,7 @@ def get_model():
 model = get_model()
 
 model.compile(
-    optimizer='adam',
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.01),
     loss=tf.keras.losses.CategoricalCrossentropy(),
     metrics=['accuracy']
 )
