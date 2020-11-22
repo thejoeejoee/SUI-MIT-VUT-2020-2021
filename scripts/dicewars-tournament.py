@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import time
+from random import shuffle
 from signal import signal, SIGCHLD
 from argparse import ArgumentParser
 
@@ -43,13 +45,16 @@ PLAYING_AIs = [
     'dt.rand',
     'dt.sdc',
     'dt.ste',
+    'dt.wpm_c',
+    'xlogin00',
+
     # 'dt.stei',
     # 'dt.wpm_d',
     # 'dt.wpm_s',
-    'dt.wpm_c',
+
     # 'xlogin42',
-    'xlogin00',
     'xkolar71',
+    'xkolar71_orig',
 ]
 UNIVERSAL_SEED = 42
 
@@ -59,7 +64,8 @@ players_info = {ai: {'games': []} for ai in PLAYING_AIs}
 def board_definitions(initial_board_seed):
     board_seed = initial_board_seed
     while True:
-        yield BoardDefinition(board_seed, UNIVERSAL_SEED, UNIVERSAL_SEED)
+        random.seed(int(time.time()))
+        yield BoardDefinition(random.randint(1, 10 ** 10), random.randint(1, 10 ** 10), random.randint(1, 10 ** 10))
         if board_seed is not None:
             board_seed += 1
 
@@ -106,15 +112,20 @@ def main():
                 break
             boards_played += 1
 
+            # shuffle(PLAYING_AIs)
+            # combatants = PLAYING_AIs #  combatants_provider.get_combatants(args.game_size)
             combatants = combatants_provider.get_combatants(args.game_size)
             nb_permutations, permutations_generator = rotational_permunations_generator(combatants)
             for i, permuted_combatants in enumerate(permutations_generator):
-                reporter.report('\r{} {}/{} {}'.format(boards_played, i+1, nb_permutations, ' vs. '.join(permuted_combatants)))
+                reporter.report('\r{} {}/{} {} (last game {})'.format(
+                    boards_played, i+1, nb_permutations, ' vs. '.join(permuted_combatants),
+                    all_games[-1].winner if all_games else '',
+                ),)
                 game_summary = run_ai_only_game(
                     args.port, args.address, procs, permuted_combatants,
                     board_definition,
-                    fixed=UNIVERSAL_SEED,
-                    client_seed=UNIVERSAL_SEED,
+                    fixed=random.randint(1, 10 ** 9),
+                    client_seed=random.randint(1, 10 ** 9),
                     logdir=args.logdir,
                     debug=args.debug,
                 )
@@ -123,6 +134,7 @@ def main():
         sys.stderr.write("Breaking the tournament because of {}\n".format(repr(e)))
         for p in procs:
             p.kill()
+        raise
 
     reporter.clean()
 
