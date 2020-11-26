@@ -19,7 +19,7 @@ def reshape_results(results: np.array) -> np.array:
         newshape=[results.shape[0], PLAYERS_COUNT]
     )
 
-model = tf.keras.models.load_model('./model-005.h5')
+model = tf.keras.models.load_model(os.path.join(os.path.dirname(__file__), 'model.h5'))
 
 def wtf_wtf_foo():
     predicted = model.predict(TEST_DATA[:10, 1:])
@@ -30,4 +30,3 @@ def wtf_wtf_bar():
 
 wtf_wtf_bar()
 wtf_wtf_foo()
-

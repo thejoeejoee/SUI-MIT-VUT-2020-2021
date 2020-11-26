@@ -1,7 +1,16 @@
+# Project: VUT FIT SUI Project - Dice Wars
+# Authors:
+#   - Josef Kolář      <xkolar71@stud.fit.vutbr.cz>
+#   - Dominik Harmim   <xharmi00@stud.fit.vutbr.cz>
+#   - Petr Kapoun      <xkapou04@stud.fit.vutbr.cz>
+#   - Jindřich Šesták  <xsesta05@stud.fit.vutbr.cz>
+# Year: 2020
+# Description: Functions for a serialisation of game configurations.
+
 import os
 import pickle
 from os import makedirs
-from typing import Dict, Tuple, Iterable, Optional, List
+from typing import Dict, Tuple, Iterable, Optional
 
 from dicewars.server.area import Area
 from dicewars.server.board import Board
@@ -12,22 +21,27 @@ MAX_PLAYER_COUNT = 4
 
 GameConfiguration = Tuple[int]
 
-LOG_DIR = os.path.join(os.path.dirname(__file__), '../../../sui-learning-data-sony')
+LOG_DIR = os.path.join(os.path.dirname(__file__), '../../../sui-learning-data-mixed')
 
 
-def serialize_game_configuration(
+def serialise_game_configuration(
         board: Board,
         players: Optional[Dict[int, Player]] = None,
         biggest_regions: Optional[Dict[int, int]] = None,
 ) -> GameConfiguration:
     """
-    Serializes current game configuration to integer vector of static length:
-    435 triangle from matrix of neighbor areas (30x30, but just half)
+    Serialises the current game configuration to an integer vector of a static length:
+    435 triangle from a matrix of neighbor areas (30x30, but just half)
     30 areas owners
     30 dices counts
     4 biggest regions
     ==
     499 integers
+
+    :param board: The game board.
+    :param players: A dictionary of players in the game.
+    :param biggest_regions: A dictionary of players and their biggest region's
+                            sizes.
     """
     assert players or biggest_regions, 'Given biggest regions directly or by players'
     assert not biggest_regions or len(biggest_regions) == MAX_PLAYER_COUNT, 'Exact count of biggest regions'
@@ -76,9 +90,12 @@ def serialize_game_configuration(
     return tuple(map(int, board_state))
 
 
-def save_game_configurations(winner_index: int, configurations: Iterable[GameConfiguration]):
+def save_game_configurations(winner_index: int, configurations: Iterable[GameConfiguration]) -> None:
     """
-    Saves configurations from finished game to folder by index of winner.
+    Saves configurations from a finished game to a folder by the index of a winner.
+
+    :param winner_index: The index of a winner.
+    :param configurations: Configurations to be saved.
     """
     winner_dir = os.path.join(LOG_DIR, f'{winner_index}')
     makedirs(winner_dir, exist_ok=True)

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import time
-from random import shuffle
 from signal import signal, SIGCHLD
 from argparse import ArgumentParser
 
@@ -17,7 +16,6 @@ import pickle
 parser = ArgumentParser(prog='Dice_Wars')
 parser.add_argument('-p', '--port', help="Server port", type=int, default=5005)
 parser.add_argument('-a', '--address', help="Server address", default='127.0.0.1')
-parser.add_argument('-b', '--board', help="Seed for generating board", type=int)
 parser.add_argument('-n', '--nb-boards', help="How many boards should be played", type=int, required=True)
 parser.add_argument('-g', '--game-size', help="How many players should play a game", type=int, required=True)
 parser.add_argument('-s', '--seed', help="Seed sampling players for a game", type=int)
@@ -56,18 +54,14 @@ PLAYING_AIs = [
     'xkolar71',
     'xkolar71_orig',
 ]
-UNIVERSAL_SEED = 42
 
 players_info = {ai: {'games': []} for ai in PLAYING_AIs}
 
 
-def board_definitions(initial_board_seed):
-    board_seed = initial_board_seed
+def board_definitions():
     while True:
         random.seed(int(time.time()))
         yield BoardDefinition(random.randint(1, 10 ** 10), random.randint(1, 10 ** 10), random.randint(1, 10 ** 10))
-        if board_seed is not None:
-            board_seed += 1
 
 
 def full_permunations_generator(players):
@@ -107,13 +101,11 @@ def main():
     boards_played = 0
     reporter = SingleLineReporter(not args.report)
     try:
-        for board_definition in board_definitions(args.board):
+        for board_definition in board_definitions():
             if boards_played == args.nb_boards:
                 break
             boards_played += 1
 
-            # shuffle(PLAYING_AIs)
-            # combatants = PLAYING_AIs #  combatants_provider.get_combatants(args.game_size)
             combatants = combatants_provider.get_combatants(args.game_size)
             nb_permutations, permutations_generator = rotational_permunations_generator(combatants)
             for i, permuted_combatants in enumerate(permutations_generator):

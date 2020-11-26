@@ -7,23 +7,26 @@
 # Year: 2020
 # Description: A definition of a class that represents an AI agent for
 #              the Dice Wars game.
+
 import os
 from collections import deque
 from copy import deepcopy
 from logging import getLogger
 from typing import List, Union, Tuple, Deque, Dict
 
+import tensorflow as tf
 from dicewars.client.ai_driver import BattleCommand, EndTurnCommand
 from dicewars.client.game.board import Board
 from ..utils import possible_attacks, probability_of_successful_attack, \
     probability_of_holding_area
-from ...ml.game import serialize_game_configuration
-
-LOCAL_DIR = os.path.dirname(__file__)
+from dicewars.ml.game import serialise_game_configuration
 
 
 class AI:
     """ A class that represents an AI agent for the Dice Wars game. """
+
+    __LOCAL_DIR = os.path.dirname(__file__)
+    """ current directory """
 
     __LOGGER_NAME = 'AI xkolar71'
     """ name of a logger """
@@ -68,11 +71,10 @@ class AI:
 
         self.__player_name = player_name
         self.__board = board
-        self._players_order = players_order
+        self.__players_order = players_order
         self.__loger = getLogger(self.__LOGGER_NAME)
 
-        self.__model = None
-        self._model
+        self.__model = self.__load_model()
 
         nb_players = board.nb_players_alive()
         self.__loger.debug(
@@ -208,7 +210,7 @@ class AI:
                  best turn, or None in case there is no suitable turn.
         """
         # construct a queue of players to be considered (in appropriate order)
-        players = deque(self._players_order)
+        players = deque(self.__players_order)
         players.reverse()
         while players[-1] != player_name:
             players.rotate(1)
@@ -222,7 +224,7 @@ class AI:
         return turn
 
     def __maxn_rec(self, board: Board, players_names: Deque[int], depth: int,
-                   ) -> Tuple[Union[Tuple[int, int], None], Dict[int, int]]:
+                   ) -> Tuple[Union[Tuple[int, int], None], Dict[int, float]]:
         """
         The Max^n recursive algorithm. It uses the single turn expectiminimax
         for the computation of the best moves in the individual turns.
@@ -244,15 +246,14 @@ class AI:
         # there are no more players
         if not players_names:
             # just evaluate the heuristic function for the AI's player
-            return None, self._batch_heuristic(board=board)
+            return None, self._heuristic([self.__player_name], board)
 
         player_name = players_names[-1]
         # current player is not alive => skip him
         if not board.get_player_areas(player_name):
             players_names.pop()
-            board_copy = deepcopy(board)
 
-            return self.__maxn_rec(board_copy, players_names, depth)
+            return self.__maxn_rec(deepcopy(board), players_names, depth)
 
         # depth is not 0 => expand lower nodes
         if depth:
@@ -292,18 +293,23 @@ class AI:
                 deepcopy(board), players_names, self.__MAXN_DEPTH
             )
 
-        evaluated = self._batch_heuristic(board=board)
         # compute the heuristic function for all living players
         living_players = set(a.get_owner_name() for a in board.areas.values())
-        h = {}
-        for player_name in living_players:
-            h[player_name] = evaluated.get(player_name)
+        h = self._heuristic(list(living_players), board)
 
         return None, h
 
-    def _batch_heuristic(self, board: Board) -> dict:
-        # TODO: doc
-        serialized = serialize_game_configuration(
+    def _heuristic(self, players: List[int], board: Board) -> Dict[int, float]:
+        """
+        Computes the heuristic function for all the given players.
+
+        :param players: Names of players.
+        :param board: The game board.
+        :return: A dictionary where keys are names of given players and values
+                 are values of the heuristic function for these players in a
+                 current game board.
+        """
+        serialised_game = serialise_game_configuration(
             board=board,
             biggest_regions={
                 i: len(
@@ -311,18 +317,21 @@ class AI:
                         player_name=i,
                         board=board
                     )
-                ) for i in self._players_order
+                ) for i in self.__players_order
             }
         )
 
-        prediction = self._model.predict([serialized])[0]
+        prediction = self.__model.predict([serialised_game])[0]
 
-        return {i: v for i, v in enumerate(prediction, start=1)}
+        return {i: v for i, v in enumerate(prediction, start=1) if i in players}
 
-    @property
-    def _model(self):
-        if not self.__model:
-            import tensorflow as tf
-            self.__model = tf.keras.models.load_model(os.path.join(LOCAL_DIR, 'model.h5'))
+    def __load_model(self) -> tf.keras.models.Model:
+        """
+        Loads a neural network model for the computation of the heuristic.
 
-        return self.__model
+        :return: A loaded neural network model for the computation of the
+                 heuristic.
+        """
+        return tf.keras.models.load_model(
+            os.path.join(self.__LOCAL_DIR, 'model.h5')
+        )

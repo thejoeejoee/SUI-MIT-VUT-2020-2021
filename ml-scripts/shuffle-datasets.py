@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+# Project: VUT FIT SUI Project - Dice Wars
+# Authors:
+#   - Josef Kolář      <xkolar71@stud.fit.vutbr.cz>
+#   - Dominik Harmim   <xharmi00@stud.fit.vutbr.cz>
+#   - Petr Kapoun      <xkapou04@stud.fit.vutbr.cz>
+#   - Jindřich Šesták  <xsesta05@stud.fit.vutbr.cz>
+# Year: 2020
+# Description: Shuffles and splits the learning data.
+
 import os
 
 import numpy as np
@@ -20,16 +29,15 @@ TEST_DATA_COUNT = int(TEST_RATIO * DATA_COUNT)
 
 np.save(
     os.path.join(DATA_DIR, 'data-train.npy'),
-    data[:TRAIN_DATA_COUNT,]
+    data[:TRAIN_DATA_COUNT, :]
 )
 
 np.save(
     os.path.join(DATA_DIR, 'data-val.npy'),
-    data[TRAIN_DATA_COUNT:TRAIN_DATA_COUNT+VALIDATE_DATA_COUNT,]
+    data[TRAIN_DATA_COUNT:TRAIN_DATA_COUNT+VALIDATE_DATA_COUNT, :]
 )
 
 np.save(
     os.path.join(DATA_DIR, 'data-test.npy'),
-    data[TRAIN_DATA_COUNT+VALIDATE_DATA_COUNT:,]
+    data[TRAIN_DATA_COUNT+VALIDATE_DATA_COUNT:, :]
 )
-

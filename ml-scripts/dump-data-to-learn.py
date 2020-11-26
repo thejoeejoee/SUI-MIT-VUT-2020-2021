@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+# Project: VUT FIT SUI Project - Dice Wars
+# Authors:
+#   - Josef Kolář      <xkolar71@stud.fit.vutbr.cz>
+#   - Dominik Harmim   <xharmi00@stud.fit.vutbr.cz>
+#   - Petr Kapoun      <xkapou04@stud.fit.vutbr.cz>
+#   - Jindřich Šesták  <xsesta05@stud.fit.vutbr.cz>
+# Year: 2020
+# Description: Generates game configurations.
+
 import random
 import sys
 from argparse import ArgumentParser
@@ -10,15 +20,12 @@ from utils import run_ai_only_game, BoardDefinition
 parser = ArgumentParser(prog='Dice_Wars')
 parser.add_argument('-p', '--port', help="Server port", type=int, default=5005)
 parser.add_argument('-a', '--address', help="Server address", default='127.0.0.1')
-parser.add_argument('-b', '--board', help="Seed for generating board", type=int, default=random.randint(0, 10 ** 10))
-parser.add_argument('-s', '--seed', help="Seed sampling players for a game", type=int)
 
 procs = []
 
 
-def signal_handler(signum, frame):
-    """Handler for SIGCHLD signal that terminates server and clients
-    """
+def signal_handler():
+    """ Handler for SIGCHLD signal that terminates server and clients. """
     for p in procs:
         try:
             p.kill()
@@ -31,33 +38,23 @@ PLAYING_AIs = [
     'xkolar71_2',
     'xkolar71_3',
     'xkolar71_4',
-    # 'dt.rand',
-    # 'dt.sdc',
-    # 'dt.ste',
-    # 'dt.stei',
 ]
-UNIVERSAL_SEED = 42
 
 
-def board_definitions(initial_board_seed):
-    board_seed = initial_board_seed
+def board_definitions():
     while True:
         random.seed(int(time.time()))
         yield BoardDefinition(random.randint(1, 10 ** 10), random.randint(1, 10 ** 10), random.randint(1, 10 ** 10))
-        if board_seed is not None:
-            board_seed += 1
 
 
 def main():
     args = parser.parse_args()
 
-    # random.seed(args.seed)
-
     signal(SIGCHLD, signal_handler)
 
     boards_played = 0
     try:
-        for board_definition in board_definitions(args.board):
+        for board_definition in board_definitions():
             boards_played += 1
 
             run_ai_only_game(

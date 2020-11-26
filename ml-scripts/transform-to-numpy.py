@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 
+# Project: VUT FIT SUI Project - Dice Wars
+# Authors:
+#   - Josef Kolář      <xkolar71@stud.fit.vutbr.cz>
+#   - Dominik Harmim   <xharmi00@stud.fit.vutbr.cz>
+#   - Petr Kapoun      <xkapou04@stud.fit.vutbr.cz>
+#   - Jindřich Šesták  <xsesta05@stud.fit.vutbr.cz>
+# Year: 2020
+# Description: Transforms game configurations into a numpy array.
+
 import os
 import pickle
 import sys
@@ -42,7 +51,7 @@ for winner in winners:
 
         print(
             f'Loaded {loaded_confs: 6} (+{items_count:>3}) configurations from {loaded_files} files.',
-              file=sys.stderr
+            file=sys.stderr
         )
 
 np.save(os.path.join(DATA_DIR, f'learning-data'), data)

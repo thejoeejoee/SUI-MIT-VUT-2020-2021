@@ -67,7 +67,7 @@ class Game:
     def run(self):
         """Main loop of the game
         """
-        from ..ml.game import serialize_game_configuration, save_game_configurations
+        from dicewars.ml.game import serialise_game_configuration, save_game_configurations
         configurations = set()
 
         try:
@@ -88,11 +88,11 @@ class Game:
                             break
                     break
 
-                serialized = serialize_game_configuration(
+                serialised_game = serialise_game_configuration(
                     board=self.board,
                     players=self.players,
                 )
-                configurations.add(serialized)
+                configurations.add(serialised_game)
 
         except KeyboardInterrupt:
             self.logger.info("Game interrupted.")

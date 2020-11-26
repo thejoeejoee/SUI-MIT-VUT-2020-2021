@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+# Project: VUT FIT SUI Project - Dice Wars
+# Authors:
+#   - Josef Kolář      <xkolar71@stud.fit.vutbr.cz>
+#   - Dominik Harmim   <xharmi00@stud.fit.vutbr.cz>
+#   - Petr Kapoun      <xkapou04@stud.fit.vutbr.cz>
+#   - Jindřich Šesták  <xsesta05@stud.fit.vutbr.cz>
+# Year: 2020
+# Description: Trains a neuron network model.
+
 import os
 
 import numpy as np
@@ -16,6 +26,7 @@ VALIDATE_DATA_COUNT = VALIDATE_DATA.shape[0]
 
 BATCH_SIZE = 32
 
+
 def reshape_results(results: np.array) -> np.array:
     return np.reshape(
         tf.keras.utils.to_categorical(
@@ -26,7 +37,7 @@ def reshape_results(results: np.array) -> np.array:
     )
 
 
-def get_model():
+def get_model() -> tf.keras.models.Model:
     input_data = tf.keras.Input(shape=(499,))
 
     NGC = 16
@@ -62,4 +73,4 @@ model.fit(
     verbose=1,
 )
 
-model.save('./model-005.h5')
+model.save(os.path.join(os.path.dirname(__file__), 'model.h5'))
