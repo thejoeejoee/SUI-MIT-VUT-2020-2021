@@ -4,3 +4,5 @@ __pycache__/
 .venv/
 /venv/
 debug.save
+/pack
+xkolar71.zip
