@@ -13,6 +13,10 @@ PDF_NAME = $(LOGIN).pdf
 
 .PHONY: pack
 pack:
+	rm $(LOGIN).zip || true
+	zip -r $(LOGIN) $(AI_DIR)/$(LOGIN) doc/$(PDF_NAME) $(AI_DIR)/xkolar71_orig.py $(AI_DIR)/xkolar71_2.py $(AI_DIR)/xkolar71_3.py $(AI_DIR)/xkolar71_4.py $(ML_DIR)/__init__.py  $(ML_DIR)/game.py $(SERVER_DIR)/game.py requirements.txt ml-scripts -x '*.gitignore'
+
+pack_supplement:
 	# clean
 	rm -rf $(TMP_DIR)
 	rm $(LOGIN).zip || true
@@ -21,12 +25,12 @@ pack:
 	# doc
 	cp doc/$(PDF_NAME)  $(TMP_DIR)
 	# ai
-	cp -r dicewars/ai/$(LOGIN) $(TMP_DIR)
+	cp -r $(AI_DIR)/$(LOGIN) $(TMP_DIR)
 	# supplementary
 	cp -r ml-scripts $(SUPL_DIR)
 	cp $(SERVER_DIR)/game.py $(TMP_SERVER)
 	cp $(AI_DIR)/xkolar71_orig.py $(AI_DIR)/xkolar71_2.py $(AI_DIR)/xkolar71_3.py $(AI_DIR)/xkolar71_4.py $(TMP_AI)
-	cp requirements.txt $(SUPL_DIR)
+	cp requirements.txt $(TMP_DIR)
 	cp $(ML_DIR)/__init__.py  $(ML_DIR)/game.py $(TMP_ML)
 	# pack
 	cd $(TMP_DIR) && zip -r $(LOGIN) $(PDF_NAME) $(LOGIN) $(SUPL_NAME) -x '*.gitignore'
