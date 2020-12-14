@@ -32,7 +32,7 @@ pack_supplement: pack_clean
 	cp requirements.txt $(TMP_DIR)
 	cp $(ML_DIR)/__init__.py  $(ML_DIR)/game.py $(TMP_ML)
 	# pack
-	cd $(TMP_DIR) && zip -r $(LOGIN) $(PDF_NAME) $(LOGIN) $(SUPL_NAME) -x '*.gitignore'
+	cd $(TMP_DIR) && zip -r $(LOGIN) $(PDF_NAME) $(LOGIN) $(SUPL_NAME) requirements.txt -x '*.gitignore'
 	mv $(TMP_DIR)/$(LOGIN).zip .
 
 pack_clean:
