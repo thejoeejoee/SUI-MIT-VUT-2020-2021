@@ -17,9 +17,9 @@ from typing import List, Union, Tuple, Deque, Dict
 import tensorflow as tf
 from dicewars.client.ai_driver import BattleCommand, EndTurnCommand
 from dicewars.client.game.board import Board
-from ..utils import possible_attacks, probability_of_successful_attack, \
+from dicewars.ai.utils import possible_attacks, probability_of_successful_attack, \
     probability_of_holding_area
-from dicewars.ml.game import serialise_game_configuration
+from .game import serialise_game_configuration
 
 
 class AI:
