@@ -1,6 +1,6 @@
 \documentclass[11pt, a4paper]{article}
 
-\usepackage[left=2cm, text={17cm, 24cm}, top=3cm]{geometry}
+\usepackage[left=2cm, top=3cm, text={17cm, 24cm}]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[czech]{babel}
 \usepackage[utf8]{inputenc}
@@ -11,7 +11,9 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{nameref}
-
+\usepackage{parskip} % hezčí odsazení odstavců
+\usepackage{float} % for using H for figures
+\usepackage{subcaption} %subfigure
 \setlength{\marginparwidth}{2cm}
 \usepackage{todonotes}
 
@@ -72,7 +74,7 @@ Cílem projektu bylo vytvořit \emph{umělou inteligenci (AI)} pro hru
 prostor} hry a~musí využívat \emph{strojové učení}. Projekt je postaven
 na bakalářské práci~\cite{turecekBP}\footnote{Projekt je konkrétně
 založen na upravené verzi z~původní bakalářské
-práce\,---\,\url{https://github.com/ibenes/dicewars}.}.
+práce: \url{https://github.com/ibenes/dicewars}.}.
 
 Dokumentace je dále strukturována následovně. Kapitola~\ref{sec:ai}
 pojednává o~základní implementaci umělé inteligence založené na prohledávání
@@ -110,15 +112,16 @@ Games}~\cite{compMultiPlGames} pak srovnává algoritmus $ Max^n $
 s~alternativními algoritmy pro hry více hráčů.
 
 \subsection{\texorpdfstring{Algoritmus $ Max^n $}{Algoritmus MaxN}}
+\label{subsec:algoritmus-max-n}
 
 Algoritmus $ Max^n $ je přesně definován ve výše uvedených
 článcích~\cite{nPersonGames, compMultiPlGames}, proto bude v~této kapitole už
 jen neformálně popsán a~znázorněn.
 
 V~klasickém algoritmu $ MiniMax $ se střídají tahy dvou hráčů. Hráč na
-tahu\,--\,$ MAX $\,--\,se snaží vybírat tahy vedoucí do stavů s~maximálním
+tahu\,---\,$ MAX $\,---\,se snaží vybírat tahy vedoucí do stavů s~maximálním
 ohodnocením, tj. snaží se maximalizovat svoji \emph{objektivní funkci}.
-Protihráč\,--\,$ MIN $\,--\,se naopak snaží minimalizovat objektivní funkci
+Protihráč\,---\,$ MIN $\,---\,se naopak snaží minimalizovat objektivní funkci
 hráče $ MAX $. Tyto dvě hodnoty lze reprezentovat jednou hodnotu
 vytvořením jejich sumy. Je také možné dívat se na tento problém tak, že
 každý z~hráčů se snažím maximalizovat svoji vlastní objektivní
@@ -135,8 +138,8 @@ Uvažuje se hra pro~3 hráče\,---\,A, B, C. Tito hráči se v~uvedeném pořad�
 střídají při hraní svých tahů. Každý z~hráčů může provést dva možné tahy.
 Po třech tazích hra skončí (obecně by po tahu hráče~C hrál opět hráč~A,
 ale zde jsou tahy hráče~C uvažovány jako koncové, po nichž hra končí).
-Stav hry je tady popsán trojicí\,--\,$ (obj(\text{A}), obj(\text{B}),
-obj(\text{C})) $\,--\,kde $ obj(\text{X}) $ je hodnota objektivní funkce
+Stav hry je tady popsán trojicí\,---\,$ (obj(\text{A}), obj(\text{B}),
+obj(\text{C})) $\,---\,kde $ obj(\text{X}) $ je hodnota objektivní funkce
 hráče~X. Na obrázku je vidět expandovaný graf hry pro dané hráče. Listové
 uzly jsou ohodnoceny objektivní funkcí a~nelistové uzly jsou ohodnoceny
 podle maximalizace objektivní funkce aktuálního hráče na tahu. Je zřejmé,
@@ -144,7 +147,7 @@ podle maximalizace objektivní funkce aktuálního hráče na tahu. Je zřejmé,
 je ohodnocen pro něho nejlepší objektivní funkcí\,---\,$ (1, 1, 1) $.
 Cesta do koncového stavu s~tímto ohodnocením je vyznačena červenými hranami.
 
-\begin{figure}[hbt]
+\begin{figure}[H]
     \centering
     \includegraphics[width=.8 \linewidth]{maxn.pdf}
     \caption{%
@@ -157,6 +160,7 @@ Cesta do koncového stavu s~tímto ohodnocením je vyznačena červenými hranam
 \subsection{\texorpdfstring{%
     Konkrétní implementace a~použití algoritmu $ Max^n $%
 }{Konkrétní implementace a~použití algoritmu MaxN}}
+\label{subsec:implementce-a-pouziti-algoritmu}
 
 Tato kapitola popisuje výslednou implementaci umělé inteligence
 prohledáváním stavového prostoru algoritmem $ Max^n $ pro tento projekt.
@@ -168,6 +172,8 @@ Implementace prohledávání stavového prostoru se nachází ve třídě
 pro ohodnocování stavů hry, která je implementována ve třídě
 \texttt{dicewars.ai.xkolar72\_orig.AI}, vzhledem k~tomu, že heuristická funkce
 byla nakonec nahrazena strojově učeným modelem, viz kapitola~\ref{sec:aiMl}).
+
+\medskip
 
 \begin{definition}[$ maxN $]
 Byla definována \emph{rekursívní} funkce $ maxN $, která implementuje
@@ -194,6 +200,8 @@ maximalizuje hodnotu funkce~$ h $ pro každého z~hráčů a~vrací tah do uzlu
 s~nejlepším ohodnocením.
 \end{definition}
 
+\medskip
+
 \begin{definition}[$ possibleTurns $]
 \label{def:possTurns}
 Tato funkce vrací všechny tahy, které je možné provést seřazené podle
@@ -211,6 +219,8 @@ v~největším regionu daného hráče, tj. je proveden útok z~největšího ú
 hráče, v~opačném případě je $ P_L = 1 $. Výpočty těchto pravděpodobností
 jsou blíže diskutovány v~původní bakalářské práci~\cite{turecekBP}.
 \end{definition}
+
+\medskip
 
 \begin{definition}[$ h $]
 \label{def:h}
@@ -235,7 +245,7 @@ nastaveny na hodnoty~1,0 a~5.
 \label{sec:aiMl}
 
 Model substituuje \emph{heuristickou funkci} a~pro každého hráče vyhodnocuje v~rámci aktuální konfigurace hry jeho šanci na výhru.
-Vstupem je tedy serializace aktuální konfigurace hry (stavu desky a~stavu hráčů) do XX celých čísel a~výstupem je vektor~4 hodnot v~intervalu $<0;1>$, který udává odhad modelu na výhru jednotlivých hráčů; $0$ značí, že model si je jistý s~nevýhrou hráče s~konkrétním indexem (rep. jménem).
+Vstupem je tedy serializace aktuální konfigurace hry (stavu desky a~stavu hráčů) do XX celých čísel a~výstupem je vektor~4 hodnot v~intervalu $<0;1>$, který udává odhad modelu na výhru jednotlivých hráčů; $0$ značí, že model si je jistý s~nevýhrou hráče s~konkrétním indexem (resp. jménem).
 
 \subsection{Serializace hry}
 \label{sec:serialiseGame}
@@ -243,11 +253,33 @@ Vstupem je tedy serializace aktuální konfigurace hry (stavu desky a~stavu hrá
 Pro trénování modelu jsme navrhli serializaci hry do vektoru XX celých čísel, který odpovídá konkrétnímu stavu hry, tedy desky a~hráčů na ní hrajících. Výsledný vektor má následující strukturu:
 
 \begin{itemize}
-    \item 435 prvků z~matice sousednosti (trojúhelník z~30x30 matice bez diagonály) \todo{zapsat matematicky}
-    \item 30 vlastníků polí
-    \item 30 počtů kostek
-    \item 4 velikosti největších regionů
+    \item matice sousednosti $M_s$ definovaná jako
+    \begin{align*}
+        M_s =
+        \begin{bmatrix}
+            s(1, 1) & s(1, 2) & s(1, 3) & \ldots & s(1, 29) \\
+            \cdot   & s(2, 2) & s(2, 3) & \ldots & s(2, 29) \\
+            \cdot   & \cdot   & s(3, 3) & \ldots & s(3, 29) \\
+            \cdot   & \cdot   & \cdot   & \ldots & s(4, 29) \\
+            \cdot   & \cdot   & \cdot   & \cdot  & \ldots   \\
+            \cdot   & \cdot   & \cdot   & \cdot  & s(29, 29)\\
+        \end{bmatrix}
+    \end{align*}
+    kdy funkce $s(x, y)$ je definovaná následovně
+    \begin{equation*}
+        s(x, y) =
+        \begin{cases}
+            1 & \text{jestliže území}\ x\ \text{sousedí s územím}\ y\\
+            0 & \text{jinak}\\
+        \end{cases}
+    \end{equation*}
+    a výsledný vektor sousednosti je poté získán jako konkatenace řádků $M_s$ z trojúhelníku nad diagonálou. Jeho celková délka je $\frac{30 * (30 - 1)}{2} = 435$ prvků.
+    \item vlastníci polí\,---\,tedy vektor o délce $30$ s hodnotami, resp. názvy, jednotlivých vlastníků polí, opět $30$ prvků
+    \item počtů kostek\,---\,vektor udávající množství kostek pro každé pole na desce
+    \item velikosti největších regionů\,---\,vektor o délce $4$ s $max(R(i))$ pro každého hráče $i$
 \end{itemize}
+
+Serializovaná hra je tedy vektor celočíselných nezáporných čísel složený ze čtyř sektorů s celkovou délkou $435 + 30 + 30 + 4 = 499$ prvků.
 
 Po každém ukončeném tahu hráče je uschována serializace hry.
 Po konci hry je ke všem serializacím přiložen index vítěze konkrétní posloupnosti tahů a~tento datový balíček
@@ -262,11 +294,12 @@ je binárně uložen na disk. Pro tento účel byla upravena metoda \texttt{run}
 
 Čtyřikrát původní AI s~$ Max^n $ algoritmem, souborový systém se soubory s~jednotlivými konfiguracemi. Pro finální natrénování modelu bylo použito 201\,291 různých konfigurací her s~odpovídajícími indexy vítězů. Pro generování konfigurací byla hra spuštěna vytvořeným skriptem \texttt{dump-data-to-learn.py}.
 
-Pomocí skriptu \texttt{transform-to-numpy.py} je tato datová sada ze souborů transformována na pole typu \texttt{numpy} o~dimenzích $(N, 1 + 499)$\,--\,$N$ značí celkový počet konfigurací a~$1 + 499$ je index vítěze a~kompletní serializace hry. Takto zkonstruované pole je uloženo jako jeden samostatný soubor pro další zpracování.
+Pomocí skriptu \texttt{transform-to-numpy.py} je tato datová sada ze souborů transformována na pole typu \texttt{numpy} o~dimenzích $(N, 1 + 499)$\,---\,$N$ značí celkový počet konfigurací a~$1 + 499$ je index vítěze a~kompletní serializace hry. Takto zkonstruované pole je uloženo jako jeden samostatný soubor pro další zpracování.
 
 Implementace dalšího zpracování datové sady je pak v~souboru \texttt{shuffle-datasets.py}, který ji načte, náhodně zamíchá podle první dimenze (tedy pořadí různých konfigurací) a~následně rozdělí na \emph{trénovací}, \emph{validační} a~\emph{testovací} data. To dělá v~poměru 70\,\%, 20\,\% a~zbylých 10\,\% pro testovací data. Takto rozdělená sada je následně uložena do třech samostatných souborů.
 
-Trénovací a~validační část datové sady je následně použita pro natrénování modelu (skript \texttt{train-model.py})\,--\,tím je v~tomto případě \emph{lineární neuronová síť} s~následující architekturou: \todo{bližší popis?}
+Trénovací a~validační část datové sady je následně použita pro natrénování modelu (skript \texttt{train-model.py})\,---\,tím je v~tomto případě \emph{lineární neuronová síť}. Její architektura byla zvolena experimentálně a celkově se skládá z pěti vrstev,
+z čehož první vrstva je čistě vstupní se vstupním vektorem o délce 499 (délka vychází ze způsobu serializace). Následuje plně propojená vrstva s 64 parametry a ReLU aktivací, jako třetí figuruje v síti \texttt{Dropout} vrstva pro prevenci přeučení s pravděpodobností vynulování vstupů $p=0.25$ a model je zakončen dvěma plně propojenými vrstvami s 32, resp. 4 parametry. Čtvrtá vrstva používá opět aktivaci ReLU, výstupní poté \texttt{softmax}. Níže je přiložen programový výstup z \texttt{keras} popisu modelu. 
 
 \begin{verbatim}
 __________________________________________________
@@ -288,7 +321,9 @@ Non-trainable params: 0
 __________________________________________________
 \end{verbatim}
 
-Nutno zmínit, že v~případě předpokládaných výsledků pro každou konfiguraci dochází ke \emph{kategorizaci}\,--\,transformaci celočíselného indexu vítěze na vektor o~počtu hráčů s~hodnotou $1$ na místě indexu vítěze a~hodnotami $0$ na ostatních pozicích.
+Nutno zmínit, že v~případě předpokládaných výsledků pro každou konfiguraci dochází ke \emph{kategorizaci}\,---\,transformaci celočíselného indexu vítěze na vektor o~počtu hráčů s~hodnotou $1$ na místě indexu vítěze a~hodnotami $0$ na ostatních pozicích\,---\,tedy platí, že pro vítěze s indexem $i$ je modelu předložen předpokládaný vektor $\begin{bmatrix}
+  x_1 & x_2 & x_3 & x_4 \\ 
+\end{bmatrix}$ u kterého platí, že $x_i = 1$, a $0$ jinak.
 
 Pro samotné natrénování je použit algoritmus \texttt{Adam} pro optimalizátor s~\emph{learning rate} na hodnotě $0,01$. Jako \emph{loss} pak trénování používá instanci \texttt{CategoricalCrossentropy} dodanou přímo knihovnou \texttt{keras}.
 Jako velikost trénovací i~validační dávky jsme experimentálně stanovili hodnotu $32$ a~počet epoch jsme opět experimentálně nastavili na $15$.
@@ -296,20 +331,63 @@ Jako velikost trénovací i~validační dávky jsme experimentálně stanovili h
 Pro ověření správnosti modelu jsme připravili skript \texttt{check-test-accuracy.py}, který určí přesnost odhadů nad částí datové sady určenou pro testování (tedy 10\,\% z~původní sady). Natrénovaný model z~testovací datové sady o~velikosti
 20\,130 správně určil celkem 19\,804 vzorků, což značí úspěšnost cca $98.3\,\%$.
 
-\todo{rychlost predictu}
+Pro ověření rychlosti vyhodnocení modelu pro vstupní data jsme připravili skript \texttt{profile-predict.py}, s pomocí kterého jsme za asistence \texttt{CProfile} profileru měřili rychlost vyhodnocení. Pro výše definovanou síť a testovací část datové sady bylo experimentálně změřeno první vyhodnocení cca 1,5 násobně delší, než ty následující (tedy 550\,ms oproti 350\,ms)\,---\,což je známý a popsaný problém modelů založených na Tensorflow\footnote{\url{https://github.com/tensorflow/tensorflow/issues/39458}}.
 
 \subsection{Integrace modelu}
-Pro použití natrénovaného modelu v~AI je upravena heuristická funkce, která nyní na základě předané konfigurace hry vyhodnocuje jednotlivé hráče, resp. jejich šanci na vítězství.
-
-\todo{batch heuristic}
-
+\label{subsec:model-integration}
+Pro použití natrénovaného modelu v~AI je upravena heuristická funkce, která nyní na základě předané konfigurace hry vyhodnocuje jednotlivé hráče, resp. jejich šanci na vítězství. Konkrétně se jedná o funkci \texttt{\_heuristic(players: List[int], board: Board)}, která na základě předaného seznamu aktivních hráčů a instance desky provede nejprve serializaci (dle postupu popsaného výše), následně vyhodnotí konfiguraci v natrénovaném modelu a nazpět vrátí ohodnocení stavu hry pro jednotlivé hráče\,---\,konkrétní hodnota pro hráče odpovídá maximalizaci jeho \emph{objektivní funkce}.
 
 \section{Vyhodnocení implementace umělé inteligence}
 \label{sec:eval}
 
-\textcolor{red}{TODO}: Zde pospat vyhodnocení. Uvést nějaké srovnání toho,
-jak se změnila úspěšnost po nasazení strojového učení.
+Po prvotní implementaci algoritmu $ Max^n $ pro účely umělé inteligence pro tuto hru jsme začali experimentovat s hraním soutěžních turnajů, kterých se účastnila i tato inteligence. Do turnajů jsme zapojovali umělé inteligence dle zadání výsledného soutěžního turnaje, tedy \texttt{dt.ste},  \texttt{dt.wpm\_c}, \texttt{dt.sdc}, \texttt{xlogin00} a nakonec i \texttt{xkolar71}. Po prvotním odladění parametrů (popsaných v kapitole \ref{subsec:implementce-a-pouziti-algoritmu}) na základě experimentů
+se turnajová úspěšnost pohybovala mezi 35\,\% a 60\,\%\,---\,viz výsledky turnajů zobrazených v \ref{fig:vysledky-turnaje-bez-modelu}.
 
+S prvními výsledky po implementaci algoritmu $ Max^n $ jsme vygenerovali serializace konfigurací her určené pro natrénování modelu, jak je popsáno v \ref{sec:trainModel}, a natrénovaný model následně integrovali do umělé inteligence, konkrétně do její heuristické funkce (jak popisuje \ref{subsec:model-integration}). Nad takto upravenou umělou inteligencí jsme spustili další turnaje, z nichž naše umělá inteligence vycházela s úspěšností na úrovni umělé inteligence bez integrace modelu\,---\,na základě tohoto pozorování jsme iterativně vylepšovali trénování modelu (experimentální změny architektury sítě, konkrétní struktury serializovaných her či velikostí datových sad). 
+
+Tyto iterace změn vedly ve výsledku k úspěšnosti umělé inteligence s integrovaným modelem na úrovni stabilních 39\,\% až 43\,\% na turnajích s násobně vyššími počty her (nad 1000). Výsledky z některých turnajů jsou zobrazeny v \ref{fig:vysledky-turnaje-s-modelem} a nutné je poznamenat, že AI \texttt{xkolar71} s integrovaným modelem vycházela z těchto turnajů úspěšněji než verze AI \texttt{xkolar71\_orig}, která je původní implementací bez integrovaného modelu.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{tournament-1.png}
+        \vspace{0mm}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering        
+        \includegraphics[width=\linewidth]{tournament-3.png}
+        \vspace{0mm}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{tournament-2.png}
+    \end{subfigure}
+    \caption{Výsledky soutěžních turnajů po prvotní implementaci umělé inteligence\,---\,tedy bez strojového učení.}
+    \label{fig:vysledky-turnaje-bez-modelu}
+\end{figure}
+
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{tournament-nn-1.png}
+        \vspace{0mm}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering        
+        \includegraphics[width=\linewidth]{tournament-nn-2.png}
+        \vspace{0mm}
+    \end{subfigure}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{tournament-nn-3.png}
+    \end{subfigure}
+    \caption{Výsledky soutěžních turnajů po integraci naučeného modelu\,---\,tedy se strojovým učením.
+    AI \texttt{xkolar71\_orig} značí umělou inteligenci bez integrovaného modelu.}
+    \label{fig:vysledky-turnaje-s-modelem}
+\end{figure}
 
 \section{Obsah odevzdaného archivu}
 \label{sec:files}
@@ -317,76 +395,90 @@ jak se změnila úspěšnost po nasazení strojového učení.
 Odevzdaný archiv \texttt{xkolar71.zip} obsahuje následující soubory:
 \begin{itemize}
     \item
-        \texttt{dicewars/ai/xkolar71\_orig.py}: Původní implementace umělé
-        inteligence \emph{bez strojového učení} popsaná
-        v~kapitole~\ref{sec:ai}.
-
-    \item
-        \texttt{dicewars/ai/xkolar71/\_\_init\_\_.py}
-        a~\textcolor{blue}{\texttt{dicewars/ai/xkolar71/ai.py}}: Balíček,
+        \texttt{xkolar71/\_\_init\_\_.py}
+        a~\textcolor{blue}{\texttt{xkolar71/ai.py}}: Balíček,
         který obsahuje implementaci umělé inteligence, která \emph{používá
         strojové učení}. Viz kapitola~\ref{sec:aiMl}.
 
     \item
-        \texttt{dicewars/ai/xkolar71/model.h5}: Natrénovaný model založený
+        \texttt{xkolar71/model.h5}: Natrénovaný model založený
         na \emph{neuronové síti}, který se používá pro modelování
         \emph{heuristické funkce} pro ohodnocování stavů hry.
+    
+    
+    \item
+        \texttt{xkolar71/game.py}: Modul s implementací serializační
+        funkce popsané v kapitole \ref{sec:serialiseGame}.
 
     \item
-        \texttt{dicewars/ai/xkolar71\_2.py},
-        \texttt{dicewars/ai/xkolar71\_3.py},
-        \texttt{dicewars/ai/xkolar71\_4.py}: \\
+        \texttt{supplementary/dicewars/ai/xkolar71\_orig.py}: Původní implementace umělé
+        inteligence \emph{bez strojového učení} popsaná
+        v~kapitole~\ref{sec:ai}.
+
+    \item
+        \texttt{supplementary/dicewars/ai/xkolar71\_2.py},
+        \texttt{supplementary/dicewars/ai/xkolar71\_3.py},
+        \texttt{supplementary/dicewars/ai/xkolar71\_4.py}: \\
         Další instance původní implementace umělé inteligence
-        \texttt{xkolar71\_orig} vytvořené pro účely trénování modelu.
+        \texttt{supplementary/xkolar71\_orig} vytvořené pro účely trénování modelu.
 
     \item
-        \texttt{dicewars/server/game.py}: Modifikovaný soubor s~třídou, která
+        \texttt{supplementary/dicewars/server/game.py}: Modifikovaný soubor s~třídou, která
         řídí hru. Byla provedena úprava pro generování konfigurací hry za
         účelem trénování modelu. Viz kapitola~\ref{sec:serialiseGame}.
 
     \item
-        \texttt{dicewars/ml/\_\_init\_\_.py} a~\texttt{dicewars/ml/game.py}:
+        \texttt{supplementary/dicewars/ml/\_\_init\_\_.py} a~\texttt{supplementary/dicewars/ml/game.py}:
         Balíček obsahující funkce sloužící k~serializaci konfigurací hry.
         Viz kapitola~\ref{sec:serialiseGame}.
 
     \item
-        \texttt{ml-scripts/dump-data-to-learn.py}: Skript pro generování
+        \texttt{supplementary/ml-scripts/dump-data-to-learn.py}: Skript pro generování
         konfigurací hry. Viz kapitola~\ref{sec:trainModel}.
 
     \item
-        \texttt{ml-scripts/transform-to-numpy.py}: Skript pro převod
+        \texttt{supplementary/ml-scripts/transform-to-numpy.py}: Skript pro převod
         vygenerovaných konfigurací hry na pole typu \texttt{numpy}. Viz
         kapitola~\ref{sec:trainModel}.
 
     \item
-        \texttt{ml-scripts/shuffle-datasets.py}: Skript pro zamíchání
+        \texttt{supplementary/ml-scripts/shuffle-datasets.py}: Skript pro zamíchání
         konfigurací hry a~jejich následné rozdělení na \emph{trénovací},
         \emph{validační} a~\emph{testovací} datové sady. Viz
         kapitola~\ref{sec:trainModel}.
 
     \item
-        \texttt{ml-scripts/train-model.py}: Skript pro vytvoření a~trénování
+        \texttt{supplementary/ml-scripts/train-model.py}: Skript pro vytvoření a~trénování
         modelu založeném na neuronové síti. Viz kapitola~\ref{sec:trainModel}.
 
     \item
-        \texttt{ml-scripts/check-test-accuracy.py}: Skript pro ověření
+        \texttt{supplementary/ml-scripts/check-test-accuracy.py}: Skript pro ověření
         správnosti modelu na testovacích datech. Viz
         kapitola~\ref{sec:trainModel}.
+        
+    \item
+        \texttt{supplementary/ml-scripts/profile-predict.py}: Skript pro ověření
+        rychlosti predikce na testovacích datech. Viz
+        kapitola~\ref{sec:trainModel}.
+
 
     \item
         \texttt{requirements.txt}: Aktualizovaný seznam knihoven, na
         kterých je projekt závislý.
 
     \item
-        \texttt{doc/xkolar71.pdf}: Tato dokumentace k~projektu.
+        \texttt{xkolar71.pdf}: Tato dokumentace k~projektu.
 \end{itemize}
 
 
 \section{Závěr}
 \label{sec:con}
 
-\textcolor{red}{TODO}
+V rámci řešení tohoto projektu jsme po úvodním rozdělení práce nastudovali funkci algoritmu $ Max^N $, abychom jej mohli následně implementovat a experimentálně nastavit jednotlivé parametry pro jeho běh -- samotná funkce algoritmu je stručně popsána v kapitole \ref{sec:ai} a to včetně popisu konkrétní implementace a jednotlivých parametrů. Po prvotní implementaci dosahovala umělá inteligence míry výher pohybujících nad úrovní 30\,\%, ve většině případů na prvním místě spouštěných turnajů.
 
+Takto chovající se umělá inteligence byla následně použita (resp. čtyři identické její instance) pro vygenerování trénovací a validační datové sady, podle kterých byl poté natrénován model ze třívrstvé neuronové sítě -- tento proces včetně architektury sítě a trénovacího \emph{workflow} je popsán v kapitole \ref{sec:aiMl}. Po integraci do původního algoritmu pomocí substituce heuristické funkce se míra výher nové umělé inteligence pohybovala nad 35\,\% a i nadále na prvních pozicích desítek soutěžních turnajů.
+
+Závěrem této dokumentace je výčet souborů v odevzdaném archivu včetně popisu funkce jednotlivých skriptů pro možnou replikovatelnost.
 
 % \section{Inspirace}
 
@@ -416,7 +508,7 @@ Odevzdaný archiv \texttt{xkolar71.zip} obsahuje následující soubory:
 % \url{https://www.chess.com/news/view/new-alphazero-paper-explores-chess-variants}\\
 
 
-\newpage
+% \newpage
 \bibliographystyle{czplain}
 \bibliography{xkolar71}
 
